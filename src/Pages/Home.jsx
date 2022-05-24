@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Spinner from '../Component/Spinner'
 import ax from '../config/ax'
+import CartContext from '../Context/CartContext'
 import Master from './Layout/Master'
 
 function Home() {
@@ -12,6 +13,8 @@ function Home() {
   const[selectedCatgory,setSelectedCategory] = useState(null)
   const [currentPage,setCurrentPage] = useState(1)
   const [api,setApi] = useState('/product')
+  
+  const {cart,setCart} = useContext(CartContext)
 
   useEffect(()=>{
     ax.get(api).then((res)=>{
@@ -27,6 +30,7 @@ function Home() {
   },[api])
 
   const viewAll = () => {
+    setProductLoader(true)
     setSelectedCategory(null)
     setCurrentPage(1)
     setApi('/product')
@@ -60,6 +64,7 @@ function Home() {
       setApi(`/product?category_id=${selectedCatgory}&page=${page}`)
     }
   }
+
 
   return (
     <Master>
@@ -102,7 +107,10 @@ function Home() {
                                     <h6 className='text-center'>{d.name}</h6>
                                     <div className="d-flex justify-content-between mt-4">
                                         <span>$ {d.price}</span>
-                                        <button className='btn btn-sm btn-warning'>Add to Cart</button>
+                                        <button 
+                                        className='btn btn-sm btn-warning'
+                                        onClick={()=>setCart([...cart,d])}
+                                        >Add to Cart</button>
                                     </div>
                                 </div>
                             </div>
